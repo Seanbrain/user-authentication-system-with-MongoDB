@@ -1,0 +1,33 @@
+<%- include('includes/header') %>
+<div class="container">
+  <%- messages() %>
+
+  <form method="post" action="/users/login" class="form-signin">
+    <h1 class="h3 mb-3 font-weight-normal text-center">User Login</h1>
+    <label for="Username" class="sr-only">Username</label>
+    <input
+      type="text"
+      name="username"
+      class="form-control"
+      placeholder="Username"
+      required
+      autofocus
+    />
+    <br />
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input
+      type="password"
+      id="inputPassword"
+      class="form-control"
+      placeholder="Password"
+      required
+    />
+    <p>No Account? <a href="/users/register">Register</a></p>
+    <br />
+    <button class="btn btn-lg btn-primary btn-block" type="submit">
+      Sign in
+    </button>
+    <p class="mt-5 mb-3 text-muted text-center">&copy; 2020</p>
+  </form>
+</div>
+<%- include('includes/footer') %>
