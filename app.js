@@ -53,7 +53,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-//creating a global variable(user) to access the user informationby creating a route to everything. that means it is going to load on every route
+//creating a global variable(user) to access the user information by creating a route to everything. that means it is going to load on every route
 app.get("*", function (req, res, next) {
   res.locals.user = req.user || null;
   next();

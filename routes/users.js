@@ -1,10 +1,10 @@
 var express = require("express");
 var router = express.Router(); // using the express Router method
-var mongojs = require("mongojs"); //
+var mongojs = require("mongojs"); // this is the ORM (Object Relational Mapping) used
 var db = mongojs("passportapp", ["users"]); //creating database instance that we can use; passport is the handler while users is a collection
 var bcrypt = require("bcryptjs"); // for encrypting the passport
 var passport = require("passport"); //takes care of authentication...
-var LocalStrategy = require("passport-local").Strategy; //in this case ,multiple strategy can be used like  twitter or facebook, but in this case I just kept in local
+var LocalStrategy = require("passport-local").Strategy; //in this case ,multiple strategy can be used like  twitter or facebook or email,  but in this case I just kept it local
 
 //log in page :  A GET request
 router.get("/login", function (req, res) {
@@ -80,7 +80,7 @@ router.post("/register", function (req, res) {
 });
 // this is used to access the messages from the user
 passport.serializeUser(function (user, done) {
-  done(null, user._id); // mondodb uses an underscore id field
+  done(null, user._id); // mongodb uses an underscore id field
 });
 
 passport.deserializeUser(function (id, done) {
@@ -97,7 +97,7 @@ passport.use(
     //now reaching into a database a grab a user by their user name using the code below
     db.users.findOne(
       {
-        username: username,
+        username: username  
       },
       function (err, user) {
         if (err) {
@@ -114,7 +114,7 @@ passport.use(
           if (isMatch) {
             return done(null, user);
           } else {
-            return null, false, { message: "Incorrect Password" };
+            return done(null, false, { message: "Incorrect Password" });
           }
         });
       }
