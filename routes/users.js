@@ -49,7 +49,7 @@ router.post("/register", function (req, res) {
       password2: password2,
     });
   } else {
-    //to handle the actual submission if it goes through. First we build an object from these variables that are coming from the form:
+    //to handle the actual submission if it goes through after validation. First we build an object from these variables that are coming from the form:
     var newUser = {
       name: name,
       email: email,
@@ -60,7 +60,7 @@ router.post("/register", function (req, res) {
     bcrypt.genSalt(10, function (err, salt) {
       bcrypt.hash(newUser.password, salt, function (err, hash) {
         newUser.password = hash;
-        // insert the above object using mongojs
+        // insert the above object to mongoDB using mongojs(an ORM)
         db.users.insert(newUser, function (err, doc) {
           if (err) {
             res.send(err);
@@ -81,6 +81,7 @@ router.post("/register", function (req, res) {
 // this is used to access the messages from the user
 passport.serializeUser(function (user, done) {
   done(null, user._id); // mongodb uses an underscore id field
+  console.log(user);
 });
 
 passport.deserializeUser(function (id, done) {
@@ -89,13 +90,14 @@ passport.deserializeUser(function (id, done) {
     user //  .findById was removed because it is not part of mongojs but part of mongoose. Also mongodb stores object ids
   ) {
     done(err, user);
+    console.log(user);
   });
 });
 // create the local strategy
 passport.use(
   new LocalStrategy(function (username, password, done) {
     //now reaching into a database a grab a user by their user name using the code below
-    db.users.findOne(
+    db.users.findOne( // a monojs method
       {
         username: username  
       },
@@ -128,17 +130,19 @@ router.post(
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/users/login",
-    failureFlash: "Invalid Username or Password",
+    failureFlash: true//"Invalid Username or Password",
+    
+   
   }),
   function (req, res) {
-    console.log("Auth  Successful");
+    console.log("Authentication For Login Successful");
     res.redirect("/");
   }
 );
 
 router.get("/logout", function (req, res) {
   req.logout();
-  res.flash("success", "You have logged out");
+  req.flash("success", "You have logged out");
   res.redirect("/users/login");
 });
 
